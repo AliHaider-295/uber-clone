@@ -7,9 +7,17 @@ module.exports.createUser = async ({
   password,
 }) => {
   if (!firstname || !email || !password) {
-    throw new Error("All   field are required");
+    throw new Error("All fields are required");
   }
-  const user = userModel.create({
+
+  // Check if the user already exists
+  const existingUser = await userModel.findOne({ email });
+  if (existingUser) {
+    throw new Error("User already exists with this email");
+  }
+
+  // Create the new user
+  const user = await userModel.create({
     fullname: {
       firstname,
       lastname,
@@ -17,5 +25,6 @@ module.exports.createUser = async ({
     email,
     password,
   });
+
   return user;
 };
